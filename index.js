@@ -18,7 +18,7 @@ const BOT_API_KEYS = [
     'bf2e2d7e409bc0d7545e14ae15a773a3',
     'ead5bd1e5c1d5caaabab4a659012fe4e'
 ];
-const WEBHOOK_SECRET = 'fSzbKfowu5bfNBb6rGRFCjoK6DDDZtS3';
+const WEBHOOK_SECRET = 'CyjFfQ4I5jx3Mtw2MLmLQlyZyFjBTVky';
 const PORT = process.env.PORT || 3000;
 
 let chatMessages = new Map();
