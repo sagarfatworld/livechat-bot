@@ -26,6 +26,27 @@ let processedThreadEvents = new Map();
 const conversationContexts = new Map();
 const processingLocks = new Map();
 
+function detectSenderType(req) {
+    const authorId = req.body?.payload?.event?.author_id;
+    const presenceIds = req.body?.additional_data?.chat_presence_user_ids || [];
+    const customerClientId =
+        req.body?.additional_data?.chat_properties?.source?.customer_client_id;
+    const sourceClientId =
+        req.body?.payload?.event?.properties?.source?.client_id;
+
+    // Agent: author is in presence list and is agent identity
+    if (authorId && presenceIds.includes(authorId) && authorId.includes('@')) {
+        return 'agent';
+    }
+
+    // Visitor: client_id matches customer_client_id
+    if (sourceClientId && customerClientId && sourceClientId === customerClientId) {
+        return 'visitor';
+    }
+
+    return 'unknown';
+}
+
 function verifySignature(req) {
     const signature = req.get('X-LiveChat-Signature') || req.get('x-livechat-signature');
     if (!signature) {
@@ -75,7 +96,7 @@ app.post('/livechat/webhook', (req, res) => {
 	    threadId = req.body.payload?.chat?.thread?.id;
 	    eventId = firstCustomerMsg?.id || null;
 	}
-
+const senderType = detectSenderType(req);
 
         const agentId = req.body.additional_data?.chat_presence_user_ids?.find(id => id.includes('@')) || null;
 
@@ -88,6 +109,7 @@ app.post('/livechat/webhook', (req, res) => {
         console.log('Webhook Type:', req.body.action);
         console.log('Chat ID:', chatId);
         console.log('Thread ID:', threadId);
+		console.log('Sender Type:', senderType);
         console.log('Agent ID:', agentId);
         console.log('Visitor Message:', messageText);
 
@@ -127,6 +149,23 @@ app.post('/livechat/webhook', (req, res) => {
                     messages: [],
                     lastUpdate: Date.now()
                 });
+            }
+
+			if (senderType === 'agent') {
+                console.log('Agent message detected');
+
+                chatMessages.get(chatId).messages.push({
+                    agentMessage: messageText,
+                    timestamp: new Date().toISOString(),
+                    threadId
+                });
+
+                conversationContexts.get(chatId).messages.push(
+                    `Agent: ${messageText}`
+                );
+                conversationContexts.get(chatId).lastUpdate = Date.now();
+
+                return; // ❌ DO NOT call bot
             }
 
             const visitorMessageData = {
