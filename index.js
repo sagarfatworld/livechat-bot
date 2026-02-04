@@ -80,6 +80,7 @@ app.post('/livechat/webhook', (req, res) => {
 	    eventId = req.body.payload?.event?.id;
 
 	} else if (req.body.action === "incoming_chat") {
+		senderType = 'visitor';
 	    const events = req.body.payload?.chat?.thread?.events || [];
 	    const customerIds = (req.body.payload?.chat?.users || [])
 	        .filter(u => u.type === "customer")
@@ -96,6 +97,7 @@ app.post('/livechat/webhook', (req, res) => {
 	    threadId = req.body.payload?.chat?.thread?.id;
 	    eventId = firstCustomerMsg?.id || null;
 	}
+		const event = req.body.payload?.event;
 const senderType = detectSenderType(req);
 
         const agentId = req.body.additional_data?.chat_presence_user_ids?.find(id => id.includes('@')) || null;
@@ -153,6 +155,13 @@ const senderType = detectSenderType(req);
 
 			if (senderType === 'agent') {
                 console.log('Agent message detected');
+
+				if (!chatMessages.has(chatId)) {
+        chatMessages.set(chatId, {
+            messages: [],
+            agentIds: new Set()
+        });
+    }
 
                 chatMessages.get(chatId).messages.push({
                     agentMessage: messageText,
