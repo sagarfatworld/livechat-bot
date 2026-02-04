@@ -248,13 +248,12 @@ app.post('/livechat/webhook', (req, res) => {
 
             //context.messages.push(`Bot: ${botAnswer}`);
 
-            //const messageData = {
-				chatMessages.get(chatId).messages.push({
+            const messageData = {
                 visitorMessage: messageText,
                 botResponse: botAnswer,
                 timestamp: new Date().toISOString(),
                 threadId: threadId
-            });
+            };
 
             chatMessages.get(chatId).messages.push(messageData);
 
