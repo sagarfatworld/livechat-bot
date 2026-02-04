@@ -63,10 +63,6 @@ app.post('/livechat/webhook', (req, res) => {
     res.status(200).send('OK');
 
     (async () => {
-		console.log('================ WEBHOOK RAW JSON ================');
-        console.log(JSON.stringify(req.body, null, 2));
-        console.log('===================================================');
-		
         let messageText = null;
         let chatId = null;
         let threadId = null;
