@@ -72,6 +72,8 @@ app.post('/livechat/webhook', (req, res) => {
         let threadId = null;
         let eventId = null;
 
+		let senderType = detectSenderType(req);
+
         // Detect webhook type test
 	if (req.body.action === "incoming_event") {
 	    messageText = req.body.payload?.event?.text;
@@ -97,8 +99,7 @@ app.post('/livechat/webhook', (req, res) => {
 	    threadId = req.body.payload?.chat?.thread?.id;
 	    eventId = firstCustomerMsg?.id || null;
 	}
-		const event = req.body.payload?.event;
-const senderType = detectSenderType(req);
+		
 
         const agentId = req.body.additional_data?.chat_presence_user_ids?.find(id => id.includes('@')) || null;
 
