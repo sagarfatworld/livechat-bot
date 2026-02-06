@@ -15,8 +15,8 @@ app.use(bodyParser.json());
 
 const BOT_API_URL = 'https://api.botatwork.com/trigger-task/42eaa2c8-e8aa-43ad-b9b5-944981bce2a2';
 const BOT_API_KEYS = [
-    'bf2e2d7e409bc0d7545e14ae15a773a3',
-    'ead5bd1e5c1d5caaabab4a659012fe4e'
+    'bgfcmhgfc,jhfvchjfvhgcvhch',
+    'ngfxmhgfcnvmhvhvhvhcvmhchgc'
 ];
 const WEBHOOK_SECRET = 'CyjFfQ4I5jx3Mtw2MLmLQlyZyFjBTVky';
 const PORT = process.env.PORT || 3000;
