@@ -62,6 +62,11 @@ function verifySignature(req) {
 app.post('/livechat/webhook', (req, res) => {
     res.status(200).send('OK');
 
+	console.log("======================================");
+    console.log("FULL LIVECHAT WEBHOOK PAYLOAD:");
+    console.log(JSON.stringify(req.body, null, 2));
+    console.log("======================================");
+
     (async () => {
         let messageText = null;
         let chatId = null;
