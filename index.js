@@ -116,7 +116,7 @@ app.post('/livechat/webhook', (req, res) => {
 
         const agentId = req.body.additional_data?.chat_presence_user_ids?.find(id => id.includes('@')) || null;
 
-        if (!messageText || !chatId || !threadId || !eventId) {
+        if (req.body.action !== "incoming_chat" && (!messageText || !chatId || !threadId || !eventId)) {
             console.log('Missing required data');
             return;
         }
