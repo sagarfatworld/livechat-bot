@@ -25,6 +25,7 @@ let chatMessages = new Map();
 let processedThreadEvents = new Map();
 const conversationContexts = new Map();
 const processingLocks = new Map();
+const chatDomains = new Map();
 
 function detectSenderType(req) {
     const authorId = req.body?.payload?.event?.author_id;
@@ -99,6 +100,17 @@ app.post('/livechat/webhook', (req, res) => {
 	    chatId = req.body.payload?.chat?.id;
 	    threadId = req.body.payload?.chat?.thread?.id;
 	    eventId = firstCustomerMsg?.id || null;
+
+		try {
+                const startUrl = req.body.payload?.chat?.thread?.properties?.routing?.start_url;
+                if (startUrl) {
+                    const domainUrl = new URL(startUrl).host;
+                    chatDomains.set(chatId, domainUrl);
+                    console.log("Domain extracted:", domainUrl);
+                }
+            } catch {
+                console.log("Failed to extract start_url");
+            }
 	}
 		
 
@@ -192,11 +204,13 @@ app.post('/livechat/webhook', (req, res) => {
             context.lastUpdate = Date.now();
 
             const fullContext = context.messages.join('\n');
+			const domainUrl = chatDomains.get(chatId) || "";
 
             const botPayload = {
                 data: {
                     payload: {
                         override_model: 'sonar',
+						leadWebsite: domainUrl,
                         clientQuestion: fullContext
                     }
                 },
@@ -309,6 +323,7 @@ setInterval(() => {
             chatMessages.delete(chatId);
             processedThreadEvents.delete(chatId);
             processingLocks.delete(chatId);
+			chatDomains.delete(chatId);
             console.log(`Cleaned up conversation for chat ID: ${chatId}`);
         }
     });
