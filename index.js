@@ -13,7 +13,7 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-const BOT_API_URL = 'https://api.botatwork.com/trigger-task/42eaa2c8-e8aa-43ad-b9b5-944981bce2a2';
+const BOT_API_URL = 'https://api.botatwork.com/trigger-task/ef2121a0-c603-4d16-b6a9-8cc73a83897f';
 const BOT_API_KEYS = [
     'bf2e2d7e409bc0d7545e14ae15a773a3',
     'ead5bd1e5c1d5caaabab4a659012fe4e'
